@@ -1,0 +1,155 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<style>
+  .gradient-bg {
+    background: linear-gradient(135deg, #e0e7ff 0%, #fef6ed 100%);
+    min-height: 100vh;
+  }
+  .custom-card {
+    border-radius: 1.2rem !important;
+    box-shadow: 0 6px 32px 0 rgba(44, 62, 80,0.10), 0 1.5px 6px 0 rgba(44,62,80,0.13);
+  }
+  .avatar-circle {
+    background: linear-gradient(135deg, #4682f4 0%, #154360 100%);
+    color: #fff;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
+    box-shadow: 0 3px 12px rgba(21,67,96,.18);
+    margin-bottom: 10px;
+  }
+  .form-label {
+    font-weight: 600;
+    color: #1b263b;
+    letter-spacing: 0.5px;
+  }
+  .form-control:focus {
+    border-color: #4682f4;
+    box-shadow: 0 0 0 0.2rem rgba(70,130,244,.15);
+  }
+  .btn-gradient {
+    background: linear-gradient(90deg,#4682f4,#154360 99%);
+    border: none;
+    transition: 0.2s;
+  }
+  .btn-gradient:hover, .btn-gradient:focus {
+    background: linear-gradient(90deg,#154360,#4682f4 99%);
+    letter-spacing: 1px;
+  }
+  .info-section h4 {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    color: #4682f4;
+  }
+  .info-section li {
+    font-size: 1.08rem;
+    margin-bottom: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+  .fade-in {
+    animation: fadeIn 0.7s;
+  }
+  @keyframes fadeIn {
+      0% { opacity: 0;}
+      100% {opacity:1;}
+  }
+</style>
+
+<div class="gradient-bg py-5">
+  <div class="container">
+    <div class="row justify-content-center align-items-center min-vh-80">
+      <div class="col-md-7 col-lg-6 col-xl-5 mb-5">
+        <div class="card custom-card p-3 fade-in">
+          <div class="card-body">
+
+            <!-- Avatar Icon -->
+            <div class="d-flex flex-column align-items-center mb-3">
+              <div class="avatar-circle shadow-sm">
+                <i class="bi bi-heart-pulse"></i>
+              </div>
+              <h3 class="fw-bold text-primary text-center mb-2" style="font-family: 'Montserrat', Arial, sans-serif;">Blood Pressure Prediction</h3>
+              <p class="text-muted text-center mb-2" style="font-size:1.07rem;">Fill in your details to predict your blood pressure risk stage.</p>
+            </div>
+
+            <form action="" method="post">
+              {{ form.hidden_tag() }}
+              {% for field in form if field.type != 'CSRFToken' and field.name != 'submit' %}
+                <div class="mb-4">
+                  {{ field.label(class="form-label") }}
+                  {{ field(class="form-control form-control-lg shadow-sm border-0") }}
+                  {% if field.errors %}
+                    {% for error in field.errors %}
+                      <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+              {% endfor %}
+              <div class="d-grid gap-2">
+                {{ form.submit(class="btn btn-gradient btn-lg fw-bold shadow-sm") }}
+              </div>
+            </form>
+            <div class="mt-4">
+              {% if output %}
+                <div class="alert alert-info text-center fade-in"><i class="bi bi-activity text-primary"></i> {{ output }}</div>
+              {% endif %}
+            </div>
+            <div class="text-center mt-2">
+              <hr>
+              <p class="mb-0" style="font-size:1.06rem;">Go back to <a href="{{ url_for('home') }}" class="fw-bold text-decoration-none text-primary">Home</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Information Section: BP Stages and Risk Factors -->
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card border-0 custom-card shadow-sm p-4 info-section fade-in">
+          <h2 class="text-center mb-3" style="font-family:'Montserrat',Arial,sans-serif; color:#154360; letter-spacing:1px;">INFORMATION</h2>
+          <p class="text-center mb-4">Blood pressure (BP) measures the force of blood pushing against artery walls. Maintaining healthy BP levels is crucial for cardiovascular health and helps prevent heart attack and stroke.</p>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="border rounded p-3 mb-3 h-100 bg-light">
+                <h4 class="mb-3">Blood Pressure Stages</h4>
+                <ul class="list-unstyled mb-0">
+                  <li><i class="bi bi-check-circle-fill text-success"></i> <b>Stage 1: Normal</b>: Systolic &lt; 120 mm Hg, Diastolic &lt; 80 mm Hg.</li>
+                  <li><i class="bi bi-check-circle-fill text-info"></i> <b>Stage 2: Elevated</b>: Systolic 120-129 mm Hg, Diastolic &lt; 80 mm Hg.</li>
+                  <li><i class="bi bi-exclamation-circle-fill text-warning"></i> <b>Stage 3: Hypertension 1</b>: Systolic 130-139 mm Hg, Diastolic 80-89 mm Hg.</li>
+                  <li><i class="bi bi-exclamation-triangle-fill text-danger"></i> <b>Stage 4: Hypertension 2</b>: Systolic ≥ 140 mm Hg, Diastolic ≥ 90 mm Hg.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="border rounded p-3 mb-3 h-100 bg-light">
+                <h4 class="mb-3">Top Risk Factors</h4>
+                <ul class="mb-0 ps-2">
+                  <li><b>Family history</b> increases risk.</li>
+                  <li><b>High salt, low potassium diets</b>.</li>
+                  <li>Lack of physical activity, excessive alcohol.</li>
+                  <li><b>Long-term stress</b> raises BP.</li>
+                  <li>Increasing age.</li>
+                  <li>Some medical conditions (e.g., obesity, kidney issues).</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <span class="text-muted" style="font-size:1rem;">For healthy BP: Stay active, eat balanced, limit salt, avoid stress &amp; tobacco.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
